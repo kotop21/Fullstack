@@ -1,0 +1,70 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Heard from "../components/Heard.astro";
+import "../style/input.css";
+
+let users = [];
+
+try {
+    const response = await fetch("http://127.0.0.1:8000/user/api");
+    if (!response.ok) {
+        throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    users = data.users || []; // Default to an empty array if data.users is undefined
+} catch (error) {
+    console.error("Failed to fetch users:", error);
+}
+---
+
+<Layout title="User List">
+    <Heard />
+    <main>
+        <div class="rounded-btn">
+            <table class="table" >
+            <!-- head -->
+            <thead>
+                <tr>
+                <th>id</th>
+                <th>User name</th>
+                <th>Point</th>
+                <th></th>
+                </tr>
+            </thead>
+            {
+                users.length > 0 ? (
+                    users.map((user) => (
+
+                              <tbody >
+                                <!-- row 1 -->
+                                <tr {user.id}>
+                                  <th>{user.id}</th>
+                                  <td>{user.username}</td>
+                                  <td>{user.point}</td>
+                                  <td>                                <a
+                                      href={`http://127.0.0.1:8000/dell/${user.id}`}
+                                  >
+                                      <button class="btn btn-primary">
+                                          Delete
+                                      </button>
+                                  </a></td>
+                                </tr>
+                              </tbody>
+
+                    ))
+                ) : (
+                    <p>Нет данных.</p>
+                )
+            }
+            </table>
+        </div>
+    </main>
+</Layout>
+
+<style>
+    main {
+        margin-left: auto;
+        margin-right: auto;
+        width: 20em;
+    }
+</style>
